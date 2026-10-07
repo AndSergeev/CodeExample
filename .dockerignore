@@ -1,0 +1,25 @@
+# Keeps the build context small and, more importantly, stops the host's build
+# artefacts from being copied into the Linux image. The host writes absolute
+# Windows paths into obj/project.assets.json (NuGet fallback folders such as
+# "C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages"), which
+# the container cannot resolve, so obj must never travel with the context.
+**/bin/
+**/obj/
+
+.git/
+.gitignore
+.vs/
+.idea/
+.vscode/
+
+# The unit tests are not part of any image.
+tests/
+
+**/*.user
+**/*.suo
+
+# Nothing below is needed to compile the services.
+docker-compose.dev.yml
+build/
+scripts/
+README.md

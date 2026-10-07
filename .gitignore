@@ -1,0 +1,47 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+*.binlog
+*.tlog
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+# Test / coverage results
+[Tt]est[Rr]esult*/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.trx
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Local configuration and secrets — must never be committed
+appsettings.Local.json
+appsettings.Development.json
+*.local.json
+.env
+.env.*
+secrets.json
+
+# NOTE: docker-compose.dev.yml and scripts/init-databases.sql are committed on
+# purpose so the reviewer can start PostgreSQL with a single command.
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store
