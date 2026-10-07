@@ -1,0 +1,76 @@
+<Project>
+
+  <!--
+    Central Package Management: every version lives here, project files only
+    reference packages by name. Makes upgrades and reviews trivial.
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup Label="CQRS and validation (User and Finance services)">
+    <PackageVersion Include="MediatR" Version="12.5.0" />
+    <PackageVersion Include="FluentValidation" Version="11.12.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.12.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Persistence (PostgreSQL: Dapper for access, DbUp for schema)">
+    <PackageVersion Include="Npgsql" Version="8.0.6" />
+    <PackageVersion Include="Dapper" Version="2.1.66" />
+    <!-- Applies the SQL scripts of the migrator projects and records them in a
+         version table, one transaction per script. -->
+    <PackageVersion Include="dbup-postgresql" Version="5.0.40" />
+  </ItemGroup>
+
+  <ItemGroup Label="Background scheduling (Currency service)">
+    <PackageVersion Include="Quartz" Version="3.22.3" />
+    <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.22.3" />
+    <PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="3.22.3" />
+    <PackageVersion Include="Quartz.Serialization.Json" Version="3.22.3" />
+  </ItemGroup>
+
+  <ItemGroup Label="API gateway and API documentation">
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Authentication and hashing">
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.31" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
+    <PackageVersion Include="BCrypt.Net-Next" Version="4.2.1" />
+  </ItemGroup>
+
+  <ItemGroup Label="Logging">
+    <PackageVersion Include="Serilog" Version="4.0.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="8.0.4" />
+  </ItemGroup>
+
+  <ItemGroup Label="Options and HTTP client support">
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <!-- Validates an options section where the container is available, which is what the
+         options classes of a published client package are checked with on start. -->
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
+    <!-- Referenced directly for TimeoutRejectedException, which the resilience handler
+         throws instead of the transport exceptions it wraps. -->
+    <PackageVersion Include="Polly.Core" Version="8.4.2" />
+      <!-- The CBR endpoint is Windows-1251 encoded; the code page is not built into .NET Core. -->
+    <PackageVersion Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Testing">
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="Moq" Version="4.21.0" />
+    <!-- 7.x is the last Apache-2.0 licensed line; 8.x moved to a commercial licence. -->
+    <PackageVersion Include="FluentAssertions" Version="7.2.2" />
+  </ItemGroup>
+
+</Project>

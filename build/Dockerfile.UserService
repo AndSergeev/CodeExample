@@ -1,0 +1,50 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# NuGet.config is deliberately not copied: build-only files are excluded from the
+# deliverable, so the build uses the public nuget.org feed that the base image has.
+COPY Directory.Build.props Directory.Packages.props ./
+COPY src/Shared/CodeExample.Shared.Abstractions/CodeExample.Shared.Abstractions.csproj src/Shared/CodeExample.Shared.Abstractions/
+COPY src/Shared/CodeExample.Shared.Security/CodeExample.Shared.Security.csproj src/Shared/CodeExample.Shared.Security/
+COPY src/Shared/CodeExample.Shared.Database/CodeExample.Shared.Database.csproj src/Shared/CodeExample.Shared.Database/
+COPY src/Shared/CodeExample.Shared.Resilience/CodeExample.Shared.Resilience.csproj src/Shared/CodeExample.Shared.Resilience/
+COPY src/Shared/CodeExample.Shared.HealthChecks/CodeExample.Shared.HealthChecks.csproj src/Shared/CodeExample.Shared.HealthChecks/
+COPY src/Shared/CodeExample.Shared.Web/CodeExample.Shared.Web.csproj src/Shared/CodeExample.Shared.Web/
+COPY src/Shared/CodeExample.Shared.Migrations/CodeExample.Shared.Migrations.csproj src/Shared/CodeExample.Shared.Migrations/
+COPY src/Shared/CodeExample.Shared.Cqrs/CodeExample.Shared.Cqrs.csproj src/Shared/CodeExample.Shared.Cqrs/
+COPY src/UserService/CodeExample.UserService.Contracts/CodeExample.UserService.Contracts.csproj src/UserService/CodeExample.UserService.Contracts/
+COPY src/UserService/CodeExample.UserService.Domain/CodeExample.UserService.Domain.csproj src/UserService/CodeExample.UserService.Domain/
+COPY src/UserService/CodeExample.UserService.Application/CodeExample.UserService.Application.csproj src/UserService/CodeExample.UserService.Application/
+COPY src/UserService/CodeExample.UserService.Infrastructure/CodeExample.UserService.Infrastructure.csproj src/UserService/CodeExample.UserService.Infrastructure/
+COPY src/UserService/CodeExample.UserService.Api/CodeExample.UserService.Api.csproj src/UserService/CodeExample.UserService.Api/
+COPY src/UserService/CodeExample.UserService.Migrator/CodeExample.UserService.Migrator.csproj src/UserService/CodeExample.UserService.Migrator/
+
+RUN dotnet restore src/UserService/CodeExample.UserService.Api/CodeExample.UserService.Api.csproj
+RUN dotnet restore src/UserService/CodeExample.UserService.Migrator/CodeExample.UserService.Migrator.csproj
+
+COPY src/Shared/ src/Shared/
+COPY src/UserService/ src/UserService/
+
+RUN dotnet publish src/UserService/CodeExample.UserService.Api/CodeExample.UserService.Api.csproj \
+        --configuration Release \
+        --no-restore \
+        --output /app
+
+RUN dotnet publish src/UserService/CodeExample.UserService.Migrator/CodeExample.UserService.Migrator.csproj \
+        --configuration Release \
+        --no-restore \
+        --output /app/migrator
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app .
+
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "CodeExample.UserService.Api.dll"]

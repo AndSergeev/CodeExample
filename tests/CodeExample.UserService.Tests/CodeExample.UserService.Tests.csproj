@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Unit tests for the User service application layer: command and query
+    handlers plus their validators, with all infrastructure mocked.
+  -->
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Moq" />
+    <PackageReference Include="FluentAssertions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\UserService\CodeExample.UserService.Domain\CodeExample.UserService.Domain.csproj" />
+    <ProjectReference Include="..\..\src\UserService\CodeExample.UserService.Application\CodeExample.UserService.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Shared\CodeExample.Shared.Abstractions\CodeExample.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Shared\CodeExample.Shared.Cqrs\CodeExample.Shared.Cqrs.csproj" />
+    <ProjectReference Include="..\..\src\Shared\CodeExample.Shared.Security\CodeExample.Shared.Security.csproj" />
+    <ProjectReference Include="..\..\src\Shared\CodeExample.Shared.Web\CodeExample.Shared.Web.csproj" />
+    <ProjectReference Include="..\..\src\UserService\CodeExample.UserService.Infrastructure\CodeExample.UserService.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

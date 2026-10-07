@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Application layer of the reference service: the CBR synchronisation scenario
+    and the queries the finance service consumes.
+  -->
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.CurrencyService.Domain\CodeExample.CurrencyService.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Abstractions\CodeExample.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Cqrs\CodeExample.Shared.Cqrs.csproj" />
+    <ProjectReference Include="..\CodeExample.CurrencyService.Contracts\CodeExample.CurrencyService.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Result and Error, and the clock every layer reads time from.
+
+    No package references on purpose: this is the bottom of the dependency graph, and
+    everything else in the solution may reference it. A package here would be inherited
+    by every project, including a published contracts package that must stay thin.
+  -->
+</Project>

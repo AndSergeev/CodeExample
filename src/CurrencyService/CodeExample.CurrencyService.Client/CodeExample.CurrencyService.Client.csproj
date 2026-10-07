@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The HTTP implementation of the currency contracts, and the one call that registers it.
+    Kept apart from the contracts so a consumer that only needs the shapes does not
+    take an HTTP client and its resilience pipeline.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.CurrencyService.Contracts\CodeExample.CurrencyService.Contracts.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Resilience\CodeExample.Shared.Resilience.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

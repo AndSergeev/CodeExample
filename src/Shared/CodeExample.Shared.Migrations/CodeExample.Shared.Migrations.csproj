@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The migration entry point every migrator executable shares: the DbUp run over the
+    assembly's embedded scripts plus the host it needs for configuration and logging.
+    Kept apart from the service code because only migrators link it.
+  -->
+  <ItemGroup>
+    <PackageReference Include="dbup-postgresql" />
+    <PackageReference Include="Serilog" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.Shared.Database\CodeExample.Shared.Database.csproj" />
+    <ProjectReference Include="..\CodeExample.Shared.Web\CodeExample.Shared.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "CodeExample.CurrencyService.Api": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5103",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "InternalApiKeyOptions__ApiKey": "dev-only-internal-api-key-0123456789",
+        "ConnectionStrings__CurrencyDatabase": "Host=localhost;Port=5432;Database=codeexample_currency;Username=codeexample;Password=postgres"
+      }
+    }
+  }
+}

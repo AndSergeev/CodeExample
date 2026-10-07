@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The JWT contract and the keys that guard the system: how a token is issued and what
+    the shared internal key is.
+
+    It holds the settings and the generator, not the HTTP side of authentication. The
+    handler that reads a key out of a request and answers 401 is part of how a service
+    exposes itself, so it lives in the web project.
+  -->
+  <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

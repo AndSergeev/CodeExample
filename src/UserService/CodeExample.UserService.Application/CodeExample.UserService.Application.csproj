@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Application layer of the User service: CQRS commands, queries and handlers.
+    Depends on the domain layer plus MediatR and FluentValidation only.
+  -->
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.UserService.Domain\CodeExample.UserService.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Abstractions\CodeExample.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Cqrs\CodeExample.Shared.Cqrs.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Security\CodeExample.Shared.Security.csproj" />
+    <ProjectReference Include="..\CodeExample.UserService.Contracts\CodeExample.UserService.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

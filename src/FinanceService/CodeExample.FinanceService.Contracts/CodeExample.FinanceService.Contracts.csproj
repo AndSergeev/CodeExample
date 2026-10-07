@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The published surface of this service: the shapes it exchanges, the paths it serves and the
+    port its consumers depend on.
+
+    No package references on purpose. This project is what another service references - or, in a
+    repository split across teams, what would be published as a versioned package - so anything
+    added here is inherited by every consumer.
+  -->
+</Project>

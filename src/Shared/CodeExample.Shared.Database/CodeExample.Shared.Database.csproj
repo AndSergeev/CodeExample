@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The Npgsql data source, the unit of work and the scripting migrator. Kept apart from
+    the web layer so a migrator can use it without an HTTP pipeline, and so nothing that
+    only needs a connection string has to reference Swashbuckle.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+  </ItemGroup>
+
+
+</Project>

@@ -1,0 +1,174 @@
+# Запускает весь стек: база, миграторы, три сервиса и гейтвей.
+#
+#   docker compose -p codeexample -f docker-compose.dev.yml up -d --build
+#
+# Гейтвей и оба публичных сервиса поднимаются на тех же портах, что и при
+# локальном запуске (5100/5101/5102), справочник - на 5103.
+
+x-jwt-signing-key: &jwt-signing-key "dev-only-signing-key-change-me-0123456789abcdef"
+x-internal-api-key: &internal-api-key "dev-only-internal-api-key-0123456789"
+
+# Общие настройки аутентификации: ключ подписи обязан совпадать во всех сервисах,
+# которые проверяют токен.
+x-jwt-environment: &jwt-environment
+  ASPNETCORE_ENVIRONMENT: Development
+  JwtOptions__SigningKey: *jwt-signing-key
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: codeexample-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: codeexample
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - codeexample-pgdata:/var/lib/postgresql/data
+      - ./scripts/init-databases.sql:/docker-entrypoint-initdb.d/01-init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codeexample -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # Одноразовый шаг миграции - то же самое, что стадия «Migrate DB» в CI/CD.
+  # Мигратор справочника дополнительно создаёт схему Quartz.
+  user-migrator:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.UserService
+    image: codeexample/user-service
+    container_name: codeexample-user-migrator
+    entrypoint: ["dotnet", "/app/migrator/CodeExample.UserService.Migrator.dll"]
+    environment:
+      ConnectionStrings__UserDatabase: "Host=postgres;Port=5432;Database=codeexample_users;Username=codeexample;Password=postgres"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  finance-migrator:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.FinanceService
+    image: codeexample/finance-service
+    container_name: codeexample-finance-migrator
+    entrypoint: ["dotnet", "/app/migrator/CodeExample.FinanceService.Migrator.dll"]
+    environment:
+      ConnectionStrings__FinanceDatabase: "Host=postgres;Port=5432;Database=codeexample_finance;Username=codeexample;Password=postgres"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  currency-migrator:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.CurrencyService
+    image: codeexample/currency-service
+    container_name: codeexample-currency-migrator
+    entrypoint: ["dotnet", "/app/migrator/CodeExample.CurrencyService.Migrator.dll"]
+    environment:
+      ConnectionStrings__CurrencyDatabase: "Host=postgres;Port=5432;Database=codeexample_currency;Username=codeexample;Password=postgres"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  currency-service:
+    image: codeexample/currency-service
+    container_name: codeexample-currency
+    restart: unless-stopped
+    environment:
+      <<: *jwt-environment
+      InternalApiKeyOptions__ApiKey: *internal-api-key
+      ConnectionStrings__CurrencyDatabase: "Host=postgres;Port=5432;Database=codeexample_currency;Username=codeexample;Password=postgres"
+      CurrencySyncStartupOptions__RunOnStartup: "true"
+    ports:
+      - "5103:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      currency-migrator:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  user-service:
+    image: codeexample/user-service
+    container_name: codeexample-user
+    restart: unless-stopped
+    environment:
+      <<: *jwt-environment
+      ConnectionStrings__UserDatabase: "Host=postgres;Port=5432;Database=codeexample_users;Username=codeexample;Password=postgres"
+    ports:
+      - "5101:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      user-migrator:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  finance-service:
+    image: codeexample/finance-service
+    container_name: codeexample-finance
+    restart: unless-stopped
+    environment:
+      <<: *jwt-environment
+      ConnectionStrings__FinanceDatabase: "Host=postgres;Port=5432;Database=codeexample_finance;Username=codeexample;Password=postgres"
+      CurrencyClientOptions__BaseUrl: "http://currency-service:8080"
+      CurrencyClientOptions__ApiKey: *internal-api-key
+    ports:
+      - "5102:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      finance-migrator:
+        condition: service_completed_successfully
+      currency-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  gateway:
+    build:
+      context: .
+      dockerfile: build/Dockerfile.Gateway
+    image: codeexample/gateway
+    container_name: codeexample-gateway
+    restart: unless-stopped
+    environment:
+      <<: *jwt-environment
+      ReverseProxy__Clusters__user-service-cluster__Destinations__instance-1__Address: "http://user-service:8080/"
+      ReverseProxy__Clusters__finance-service-cluster__Destinations__instance-1__Address: "http://finance-service:8080/"
+    ports:
+      - "5100:8080"
+    depends_on:
+      user-service:
+        condition: service_healthy
+      finance-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+volumes:
+  codeexample-pgdata:

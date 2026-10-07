@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The published surface of the currency reference service: the interchange models and
+    the port its consumers depend on.
+
+    No package references on purpose. This project is what another service references,
+    so anything added here is inherited by every consumer.
+  -->
+</Project>

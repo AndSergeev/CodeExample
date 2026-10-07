@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Infrastructure layer of the User service: PostgreSQL access through Dapper and
+    the BCrypt password hasher. The schema itself is created by the migrator project,
+    not here, so this project contains no migrations.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="BCrypt.Net-Next" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.UserService.Domain\CodeExample.UserService.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Database\CodeExample.Shared.Database.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Domain layer of the Finance service: the watched-currency aggregate.
+    Depends on nothing outside the base class library.
+  -->
+
+</Project>

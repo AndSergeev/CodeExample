@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "CodeExample.UserService.Api": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5101",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "JwtOptions__SigningKey": "dev-only-signing-key-change-me-0123456789abcdef",
+        "ConnectionStrings__UserDatabase": "Host=localhost;Port=5432;Database=codeexample_users;Username=codeexample;Password=postgres"
+      }
+    }
+  }
+}

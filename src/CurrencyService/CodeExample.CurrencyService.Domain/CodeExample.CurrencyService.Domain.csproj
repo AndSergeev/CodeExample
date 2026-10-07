@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Domain layer of the currency reference service: the Currency aggregate, the single
+    source of the Central Bank rates.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Abstractions\CodeExample.Shared.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

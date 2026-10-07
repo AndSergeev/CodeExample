@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Domain layer of the User service: pure business rules and contracts.
+    Deliberately free of third-party packages.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Abstractions\CodeExample.Shared.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

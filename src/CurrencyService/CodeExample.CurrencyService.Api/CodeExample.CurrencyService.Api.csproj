@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    The reference service internal API. Deliberately NOT published through the gateway:
+    only neighbouring services call it, authenticating with a shared internal key.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Quartz" />
+    <PackageReference Include="Quartz.Extensions.Hosting" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" />
+    <PackageReference Include="Quartz.Serialization.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.CurrencyService.Domain\CodeExample.CurrencyService.Domain.csproj" />
+    <ProjectReference Include="..\CodeExample.CurrencyService.Application\CodeExample.CurrencyService.Application.csproj" />
+    <ProjectReference Include="..\CodeExample.CurrencyService.Infrastructure\CodeExample.CurrencyService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Web\CodeExample.Shared.Web.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.HealthChecks\CodeExample.Shared.HealthChecks.csproj" />
+    <ProjectReference Include="..\CodeExample.CurrencyService.Contracts\CodeExample.CurrencyService.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

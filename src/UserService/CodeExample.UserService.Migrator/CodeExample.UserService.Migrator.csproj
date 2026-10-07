@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    User service database migrator, run as its own CI/CD step before deployment.
+    It owns the schema: the SQL scripts are embedded here and applied through DbUp.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CodeExample.UserService.Migrator</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.UserService.Infrastructure\CodeExample.UserService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Migrations\CodeExample.Shared.Migrations.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Embedded rather than copied next to the executable: DbUp reads them from the
+         assembly, so a deployment cannot end up with scripts missing while the
+         binary claims to be complete. -->
+    <EmbeddedResource Include="Migrations\*.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The Web SDK copies appsettings automatically; a console project does not,
+         so the migrator would find no configuration next to its executable. -->
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

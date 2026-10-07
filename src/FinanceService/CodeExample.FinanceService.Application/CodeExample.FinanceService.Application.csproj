@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Application layer of the Finance service: CQRS handlers for favourites
+    and the currency-rate query, plus the abstraction of the reference service.
+  -->
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.FinanceService.Domain\CodeExample.FinanceService.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Abstractions\CodeExample.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Cqrs\CodeExample.Shared.Cqrs.csproj" />
+    <ProjectReference Include="..\..\CurrencyService\CodeExample.CurrencyService.Contracts\CodeExample.CurrencyService.Contracts.csproj" />
+    <ProjectReference Include="..\CodeExample.FinanceService.Contracts\CodeExample.FinanceService.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

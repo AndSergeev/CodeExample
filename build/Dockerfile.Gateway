@@ -1,0 +1,36 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY Directory.Build.props Directory.Packages.props ./
+COPY src/Shared/CodeExample.Shared.Abstractions/CodeExample.Shared.Abstractions.csproj src/Shared/CodeExample.Shared.Abstractions/
+COPY src/Shared/CodeExample.Shared.Security/CodeExample.Shared.Security.csproj src/Shared/CodeExample.Shared.Security/
+COPY src/Shared/CodeExample.Shared.Database/CodeExample.Shared.Database.csproj src/Shared/CodeExample.Shared.Database/
+COPY src/Shared/CodeExample.Shared.Resilience/CodeExample.Shared.Resilience.csproj src/Shared/CodeExample.Shared.Resilience/
+COPY src/Shared/CodeExample.Shared.HealthChecks/CodeExample.Shared.HealthChecks.csproj src/Shared/CodeExample.Shared.HealthChecks/
+COPY src/Shared/CodeExample.Shared.Web/CodeExample.Shared.Web.csproj src/Shared/CodeExample.Shared.Web/
+COPY src/Shared/CodeExample.Shared.Cqrs/CodeExample.Shared.Cqrs.csproj src/Shared/CodeExample.Shared.Cqrs/
+COPY src/Gateway/CodeExample.Gateway/CodeExample.Gateway.csproj src/Gateway/CodeExample.Gateway/
+
+RUN dotnet restore src/Gateway/CodeExample.Gateway/CodeExample.Gateway.csproj
+
+COPY src/Shared/ src/Shared/
+COPY src/Gateway/ src/Gateway/
+
+RUN dotnet publish src/Gateway/CodeExample.Gateway/CodeExample.Gateway.csproj \
+        --configuration Release \
+        --no-restore \
+        --output /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app .
+
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "CodeExample.Gateway.dll"]

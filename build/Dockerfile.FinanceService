@@ -1,0 +1,51 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY Directory.Build.props Directory.Packages.props ./
+COPY src/Shared/CodeExample.Shared.Abstractions/CodeExample.Shared.Abstractions.csproj src/Shared/CodeExample.Shared.Abstractions/
+COPY src/Shared/CodeExample.Shared.Security/CodeExample.Shared.Security.csproj src/Shared/CodeExample.Shared.Security/
+COPY src/Shared/CodeExample.Shared.Database/CodeExample.Shared.Database.csproj src/Shared/CodeExample.Shared.Database/
+COPY src/Shared/CodeExample.Shared.Resilience/CodeExample.Shared.Resilience.csproj src/Shared/CodeExample.Shared.Resilience/
+COPY src/Shared/CodeExample.Shared.HealthChecks/CodeExample.Shared.HealthChecks.csproj src/Shared/CodeExample.Shared.HealthChecks/
+COPY src/Shared/CodeExample.Shared.Web/CodeExample.Shared.Web.csproj src/Shared/CodeExample.Shared.Web/
+COPY src/Shared/CodeExample.Shared.Migrations/CodeExample.Shared.Migrations.csproj src/Shared/CodeExample.Shared.Migrations/
+COPY src/Shared/CodeExample.Shared.Cqrs/CodeExample.Shared.Cqrs.csproj src/Shared/CodeExample.Shared.Cqrs/
+COPY src/FinanceService/CodeExample.FinanceService.Contracts/CodeExample.FinanceService.Contracts.csproj src/FinanceService/CodeExample.FinanceService.Contracts/
+COPY src/CurrencyService/CodeExample.CurrencyService.Contracts/CodeExample.CurrencyService.Contracts.csproj src/CurrencyService/CodeExample.CurrencyService.Contracts/
+COPY src/CurrencyService/CodeExample.CurrencyService.Client/CodeExample.CurrencyService.Client.csproj src/CurrencyService/CodeExample.CurrencyService.Client/
+COPY src/FinanceService/CodeExample.FinanceService.Domain/CodeExample.FinanceService.Domain.csproj src/FinanceService/CodeExample.FinanceService.Domain/
+COPY src/FinanceService/CodeExample.FinanceService.Application/CodeExample.FinanceService.Application.csproj src/FinanceService/CodeExample.FinanceService.Application/
+COPY src/FinanceService/CodeExample.FinanceService.Infrastructure/CodeExample.FinanceService.Infrastructure.csproj src/FinanceService/CodeExample.FinanceService.Infrastructure/
+COPY src/FinanceService/CodeExample.FinanceService.Api/CodeExample.FinanceService.Api.csproj src/FinanceService/CodeExample.FinanceService.Api/
+COPY src/FinanceService/CodeExample.FinanceService.Migrator/CodeExample.FinanceService.Migrator.csproj src/FinanceService/CodeExample.FinanceService.Migrator/
+
+RUN dotnet restore src/FinanceService/CodeExample.FinanceService.Api/CodeExample.FinanceService.Api.csproj
+RUN dotnet restore src/FinanceService/CodeExample.FinanceService.Migrator/CodeExample.FinanceService.Migrator.csproj
+
+COPY src/Shared/ src/Shared/
+COPY src/CurrencyService/ src/CurrencyService/
+COPY src/FinanceService/ src/FinanceService/
+
+RUN dotnet publish src/FinanceService/CodeExample.FinanceService.Api/CodeExample.FinanceService.Api.csproj \
+        --configuration Release \
+        --no-restore \
+        --output /app
+
+RUN dotnet publish src/FinanceService/CodeExample.FinanceService.Migrator/CodeExample.FinanceService.Migrator.csproj \
+        --configuration Release \
+        --no-restore \
+        --output /app/migrator
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app .
+
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "CodeExample.FinanceService.Api.dll"]

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Currency service infrastructure: its own database through Dapper and the CBR XML client.
+    The migrator owns the schema, not this project, so there are no migrations here.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+    <PackageReference Include="Polly.Core" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="System.Text.Encoding.CodePages" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.CurrencyService.Domain\CodeExample.CurrencyService.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Abstractions\CodeExample.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Database\CodeExample.Shared.Database.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Resilience\CodeExample.Shared.Resilience.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Web\CodeExample.Shared.Web.csproj" />
+  </ItemGroup>
+
+</Project>

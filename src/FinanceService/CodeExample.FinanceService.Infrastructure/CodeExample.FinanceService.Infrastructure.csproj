@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Infrastructure layer of the Finance service: its own database through Dapper plus the
+    typed HTTP client that talks to the currency service. The schema itself is created by
+    the migrator project, not here, so this project contains no migrations.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Dapper" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeExample.FinanceService.Domain\CodeExample.FinanceService.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\CodeExample.Shared.Database\CodeExample.Shared.Database.csproj" />
+    <ProjectReference Include="..\..\CurrencyService\CodeExample.CurrencyService.Client\CodeExample.CurrencyService.Client.csproj" />
+  </ItemGroup>
+
+</Project>

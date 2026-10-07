@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "CodeExample.FinanceService.Api": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5102",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "JwtOptions__SigningKey": "dev-only-signing-key-change-me-0123456789abcdef",
+        "CurrencyClientOptions__ApiKey": "dev-only-internal-api-key-0123456789",
+        "ConnectionStrings__FinanceDatabase": "Host=localhost;Port=5432;Database=codeexample_finance;Username=codeexample;Password=postgres",
+        "CurrencyClientOptions__BaseUrl": "http://localhost:5103"
+      }
+    }
+  }
+}
